@@ -394,6 +394,7 @@
         ['use_aura==1', {
           'dependencies': [
             '../ui/aura/aura.gyp:aura',
+            '../ui/base/ime/ui_base_ime.gyp:ui_base_ime',
           ],
         }],
         ['OS=="linux" and use_libnotify==1', {
