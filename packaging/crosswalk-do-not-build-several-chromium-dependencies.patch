@@ -174,7 +174,7 @@ BUG=XWALK-2571
          '<(DEPTH)/base/base.gyp:base',
 --- src/content/content.gyp
 +++ src/content/content.gyp
-@@ -21,6 +21,68 @@
+@@ -21,6 +21,69 @@
        }],
      ],
    },
@@ -211,6 +211,7 @@ BUG=XWALK-2571
 +        '../third_party/WebKit/public/blink_headers.gyp:blink_headers',
 +        # The public render_widget_host.h needs to re-export skia defines.
 +        '../skia/skia.gyp:skia',
++        'content_common_mojo_bindings.gyp:content_common_mojo_bindings',
 +      ],
 +
 +      'actions': [
