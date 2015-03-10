@@ -36,17 +36,23 @@ const GURL kAboutBlankURL = GURL("about:blank");
 XWalkExtensionRendererController::XWalkExtensionRendererController(
     Delegate* delegate)
     : shutdown_event_(false, false),
-      delegate_(delegate) {
+      delegate_(delegate),
+      weak_factory_(this) {
   content::RenderThread* thread = content::RenderThread::Get();
   thread->AddObserver(this);
   IPC::SyncChannel* browser_channel = thread->GetChannel();
-  SetupBrowserProcessClient(browser_channel);
+  base::MessageLoop::current()->PostTask(
+      FROM_HERE,
+      base::Bind(&XWalkExtensionRendererController::SetupBrowserProcessClient, weak_factory_.GetWeakPtr(), browser_channel));
 
   base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
   if (cmd_line->HasSwitch(switches::kXWalkDisableExtensionProcess))
     LOG(INFO) << "EXTENSION PROCESS DISABLED.";
-  else
-    SetupExtensionProcessClient(browser_channel);
+  else {
+    base::MessageLoop::current()->PostTask(
+        FROM_HERE,
+        base::Bind(&XWalkExtensionRendererController::SetupExtensionProcessClient, weak_factory_.GetWeakPtr(), browser_channel));
+  }
 }
 
 XWalkExtensionRendererController::~XWalkExtensionRendererController() {
@@ -147,12 +153,14 @@ void XWalkExtensionRendererController::OnRenderProcessShutdown() {
 
 void XWalkExtensionRendererController::SetupBrowserProcessClient(
     IPC::SyncChannel* browser_channel) {
+  LOG(INFO) << "XWalkExtensionRendererController::SetupBrowserProcessClient.";
   in_browser_process_extensions_client_.reset(new XWalkExtensionClient);
   in_browser_process_extensions_client_->Initialize(browser_channel);
 }
 
 void XWalkExtensionRendererController::SetupExtensionProcessClient(
     IPC::SyncChannel* browser_channel) {
+  LOG(INFO) << "XWalkExtensionRendererController::SetupExtensionProcessClient.";
   IPC::ChannelHandle handle;
   browser_channel->Send(
       new XWalkExtensionProcessHostMsg_GetExtensionProcessChannel(&handle));

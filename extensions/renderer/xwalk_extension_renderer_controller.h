@@ -11,6 +11,7 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/synchronization/waitable_event.h"
+#include "base/memory/weak_ptr.h"
 #include "content/public/renderer/render_process_observer.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "v8/include/v8.h"
@@ -74,6 +75,7 @@ class XWalkExtensionRendererController : public content::RenderProcessObserver {
   base::WaitableEvent shutdown_event_;
   scoped_ptr<IPC::SyncChannel> extension_process_channel_;
   Delegate* delegate_;
+  base::WeakPtrFactory<XWalkExtensionRendererController> weak_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(XWalkExtensionRendererController);
 };
